@@ -2,140 +2,229 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>⏳ 定格漫遊：手掌間的全球 3D 景觀摺頁</title>
     <style>
         :root {
-            --bg-color: #f7f6f1;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --text-muted: #8c8c8c;
-            --border-radius: 16px;
-            --primary-color: #222222;
-            --accent-active: #e8f3fd;
-            --border-active: #d2e6fa;
+            --bg-color: #F4F3EE;
+            --canvas-bg: #FAF9F5;
+            --card-bg: #FFFFFF;
+            --text-main: #1A1A1E;
+            --text-muted: #86868B;
+            --primary-accent: #111111;
+            --active-blue: #E8F2FF;
+            --active-blue-border: rgba(0, 122, 255, 0.15);
+            --spring-easing: cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-smooth: all 0.4s var(--spring-easing);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
-            padding: 16px;
+            color: var(--text-main);
+            padding: 24px 16px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
+            letter-spacing: -0.01em;
         }
 
         .container {
             width: 100%;
-            max-width: 480px;
+            max-width: 440px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 20px;
         }
 
-        /* 頂部主標題 */
-        .app-header {
-            text-align: center;
-            padding: 8px 0;
-        }
-
-        .app-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary-color);
-            letter-spacing: 0.5px;
-        }
-
-        .app-subtitle {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        /* 頂部步驟條 */
-        .steps-container {
+        /* 👑 頂部全新進化：動態微光溢出、流線玻璃名牌 Header */
+        .header-wrapper {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
-        .step-bar {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 14px 20px;
+        /* 主標題：注入微暗陽極氧化鋁質感，搭配極細光邊 */
+        .header-box-main {
+            background: linear-gradient(135deg, #1E1E22 0%, #111113 100%);
+            border-radius: 20px;
+            padding: 26px 16px;
+            text-align: center;
+            /* 1px 內嵌半透明亮邊，消除死板，製造物件懸浮的邊界光 */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            /* 多層瀰散深色陰影，帶來實體厚度感 */
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.06),
+                0 4px 12px rgba(0, 0, 0, 0.04),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .app-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #FAF9F5;
+            /* 拉開字距，瞬間消除擁擠與沉悶，產生呼吸感 */
+            letter-spacing: 0.12em; 
+            text-indent: 0.12em; /* 修正拉開字距後的居中偏置 */
             display: flex;
             align-items: center;
-            gap: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
-            border: 1px solid rgba(0,0,0,0.03);
-            transition: all 0.3s ease;
+            justify-content: center;
+            gap: 12px;
         }
 
-        .step-bar.active {
-            border-color: var(--primary-color);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        /* 讓文字中的 Emoji 帶有精緻的微微浮雕陰影 */
+        .app-title span {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
         }
 
-        .step-number {
-            background: var(--primary-color);
-            color: #ffffff;
-            width: 24px;
-            height: 24px;
+        /* 副標題：引入柔和空氣感與霧面玻璃細邊 */
+        .header-box-sub {
+            background: rgba(255, 255, 255, 0.65);
+            /* 霧面毛玻璃效果，讓底色隱約透出，打破死白 */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.015);
+        }
+
+        .app-subtitle {
+            font-size: 15px;
+            font-weight: 600;
+            color: #3A3A3F;
+            /* 精細微調字距與灰色調，製造出雜誌排版的高級留白 */
+            letter-spacing: 0.06em;
+            text-indent: 0.06em;
+        }
+
+        /* ⚡ 智慧型流線進度條 */
+        .pipeline-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            position: relative;
+        }
+
+        .pipeline-node {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 2;
+            transition: var(--transition-smooth);
+        }
+
+        .pipeline-number {
+            background: #E8E8ED;
+            color: var(--text-muted);
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            transition: var(--transition-smooth);
+        }
+
+        .pipeline-text {
             font-size: 13px;
-            font-weight: bold;
-        }
-
-        .step-text {
-            font-size: 15px;
             font-weight: 600;
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+            white-space: nowrap;
         }
 
-        /* 主面板 */
+        .pipeline-node.active .pipeline-number {
+            background: var(--primary-accent);
+            color: #FFFFFF;
+        }
+
+        .pipeline-node.active .pipeline-text {
+            color: var(--text-main);
+        }
+
+        .pipeline-line {
+            flex: 1;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.05);
+            margin: 0 12px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .pipeline-line::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: var(--primary-accent);
+            transition: var(--transition-smooth);
+        }
+
+        .pipeline-container.stage-2 #line1::after { width: 100%; }
+        .pipeline-container.stage-3 #line1::after { width: 100%; }
+        .pipeline-container.stage-3 #line2::after { width: 100%; }
+
+        /* 🎛️ 主操作控制台面板 */
         .main-panel {
             background: var(--card-bg);
-            border-radius: 24px;
-            padding: 24px 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.03);
+            border-radius: 28px;
+            padding: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
             display: flex;
             flex-direction: column;
         }
 
         .panel-title {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
-            margin-bottom: 14px;
-            font-weight: 500;
+            margin-bottom: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        /* 搜索欄 */
+        /* 🔍 搜索欄 */
         .search-box {
-            background: var(--bg-color);
-            border-radius: var(--border-radius);
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 14px;
             display: flex;
             align-items: center;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            border: 1px solid transparent;
-            transition: all 0.2s;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.01);
+            transition: var(--transition-smooth);
         }
 
         .search-box:focus-within {
-            border-color: #ddd;
-            background: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            background: var(--card-bg);
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .search-icon {
+            font-size: 16px;
+            opacity: 0.5;
         }
 
         .search-box input {
@@ -143,48 +232,51 @@
             background: transparent;
             width: 100%;
             font-size: 15px;
+            font-weight: 500;
             outline: none;
-            margin-left: 10px;
-            color: var(--text-color);
+            margin-left: 12px;
+            color: var(--text-main);
         }
 
-        /* 左右控制箭頭滑動外殼 */
+        /* ◀ ▶ 橫向大洲滑動條 */
         .continents-wrapper {
             display: flex;
             align-items: center;
             position: relative;
-            margin-bottom: 18px;
-            background: var(--bg-color);
-            border-radius: 20px;
-            padding: 2px 4px;
+            margin-bottom: 22px;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 14px;
+            padding: 4px;
         }
 
         .scroll-arrow {
             background: transparent;
             border: none;
-            font-size: 12px;
+            font-size: 10px;
             color: var(--text-muted);
             cursor: pointer;
-            padding: 8px;
-            user-select: none;
+            width: 28px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.2s;
+            transition: var(--transition-smooth);
+            border-radius: 10px;
         }
 
         .scroll-arrow:hover {
-            color: var(--primary-color);
+            color: var(--primary-accent);
+            background: rgba(0, 0, 0, 0.03);
         }
 
         .continents-tabs {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             overflow-x: auto;
             flex: 1;
             scroll-behavior: smooth;
             scrollbar-width: none;
-            padding: 4px 0;
+            padding: 2px 0;
         }
         
         .continents-tabs::-webkit-scrollbar {
@@ -192,152 +284,194 @@
         }
 
         .tab-btn {
-            background: #ffffff;
+            background: transparent;
             border: 1px solid transparent;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 8px 14px;
+            border-radius: 10px;
             font-size: 13px;
             font-weight: 600;
-            color: #555;
+            color: var(--text-muted);
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            transition: var(--transition-smooth);
         }
 
         .tab-btn.active {
-            background: var(--primary-color);
-            color: #ffffff;
+            background: var(--card-bg);
+            color: var(--primary-accent);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            border-color: rgba(0,0,0,0.02);
         }
 
-        /* 國家網格 */
+        /* 🗺️ 國家網格 */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            min-height: 120px;
+            gap: 12px;
         }
 
         .country-btn {
-            background: var(--bg-color);
-            border: 1px solid transparent;
-            border-radius: var(--border-radius);
-            padding: 14px 8px;
+            background: var(--canvas-bg);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            border-radius: 16px;
+            padding: 16px 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: var(--transition-smooth);
             outline: none;
         }
 
-        .country-btn:active {
-            transform: scale(0.96);
+        .country-btn:active, .action-button:active, .tab-btn:active {
+            transform: scale(0.95);
+        }
+
+        .country-btn:hover {
+            border-color: rgba(0, 0, 0, 0.06);
+            background: var(--card-bg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         }
 
         .country-btn.selected {
-            background: var(--accent-active);
-            border-color: var(--border-active);
+            background: var(--active-blue);
+            border-color: var(--active-blue-border);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.03);
         }
 
         .flag-img {
-            width: 36px;
+            width: 38px;
             height: 26px;
             object-fit: cover;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.1) inset;
         }
 
         .country-name {
             font-size: 13px;
-            font-weight: 500;
-            color: #444;
+            font-weight: 600;
+            color: #2C2C30;
             text-align: center;
         }
 
-        /* 聯動動態展現區 */
+        /* 📋 聯動動態精密展現區 */
         .dynamic-flow-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px dashed #e5e5e0;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             display: none;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
+            animation: fadeIn 0.4s var(--spring-easing);
         }
 
-        .prompt-preview-box {
-            background: #fafafa;
-            border: 1px solid #eeeeee;
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 12px;
-            color: #555;
-            max-height: 110px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            line-height: 1.5;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .prompt-lang-title {
-            font-weight: bold;
-            color: #222;
-            margin-bottom: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
         }
 
-        /* 雙按鈕橫向並排樣式優化 */
+        .prompt-preview-box {
+            background: #F5F5F7;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 12.5px;
+            font-family: "SF Mono", SFMono-Regular, Consolas, monospace;
+            color: #424245;
+            max-height: 120px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            scrollbar-width: none;
+        }
+        
+        .prompt-preview-box::-webkit-scrollbar {
+            display: none;
+        }
+
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
         }
 
         .action-button {
             border: none;
-            border-radius: var(--border-radius);
-            padding: 15px;
+            border-radius: 16px;
+            padding: 16px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            flex: 1; /* 均分寬度 */
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            transition: all 0.2s ease;
+            gap: 8px;
+            transition: var(--transition-smooth);
         }
 
-        .btn-copy { background: var(--primary-color); color: #ffffff; }
-        .btn-copy:hover { background: #444444; }
-        .btn-copy.success { background: #4caf50; }
+        .btn-copy { 
+            background: var(--primary-accent); 
+            color: #FFFFFF; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .btn-copy:hover { background: #2A2A30; }
+        .btn-copy.success { background: #34C759; box-shadow: 0 4px 12px rgba(52, 199, 89, 0.2); }
 
         .btn-doubao {
-            background: linear-gradient(135deg, #3884ff, #0052d9);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(56, 132, 255, 0.2);
+            background: linear-gradient(135deg, #007AFF, #0056C6);
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(0, 122, 255, 0.25);
         }
+        .btn-doubao:hover { opacity: 0.95; box-shadow: 0 4px 18px rgba(0, 122, 255, 0.35); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="app-header">
-        <h1 class="app-title">⏳ 定格漫遊</h1>
-        <p class="app-subtitle">手掌間的全球 3D 景觀摺頁</p>
+    <!-- 👑 破除悶感：光影流線、透氣感重構的全新 Header -->
+    <div class="header-wrapper">
+        <div class="header-box-main">
+            <h1 class="app-title"><span>🧭</span> 定格漫遊 <span>⏳</span></h1>
+        </div>
+        <div class="header-box-sub">
+            <p class="app-subtitle">手掌間的全球 3D 景觀摺頁</p>
+        </div>
     </div>
 
-    <div class="steps-container">
-        <div class="step-bar active" id="stepBar1"><div class="step-number">1</div><div class="step-text" id="step1Text">揀你想去嘅國家</div></div>
-        <div class="step-bar" id="stepBar2"><div class="step-number">2</div><div class="step-text">一鍵複製提示詞</div></div>
-        <div class="step-bar" id="stepBar3"><div class="step-number">3</div><div class="step-text">貼落豆包生成</div></div>
+    <!-- ⚡ 智慧型流線進度條 -->
+    <div class="pipeline-container" id="pipelineBox">
+        <div class="pipeline-node active" id="node1">
+            <div class="pipeline-number">1</div>
+            <div class="pipeline-text" id="step1Text">揀國家</div>
+        </div>
+        <div class="pipeline-line" id="line1"></div>
+        <div class="pipeline-node" id="node2">
+            <div class="pipeline-number">2</div>
+            <div class="pipeline-text">複製</div>
+        </div>
+        <div class="pipeline-line" id="line2"></div>
+        <div class="pipeline-node" id="node3">
+            <div class="pipeline-number">3</div>
+            <div class="pipeline-text">貼上生成</div>
+        </div>
     </div>
 
     <div class="main-panel">
         <div class="panel-title" id="panelStageTitle">第一步．揀國家</div>
         
         <div class="search-box">
-            <span>🔍</span>
+            <span class="search-icon">🔍</span>
             <input type="text" id="searchInput" placeholder="搜尋漫遊目的地（英文或中文）">
         </div>
 
@@ -357,10 +491,9 @@
         <div class="grid-container" id="gridContainer"></div>
 
         <div class="dynamic-flow-section" id="flowSection">
-            <div class="prompt-lang-title">📋 摺頁場景提示詞 (Midjourney / DALL-E 通用):</div>
+            <div class="prompt-lang-title">📋 摺頁場景提示詞 (Midjourney / DALL-E 通用)</div>
             <div class="prompt-preview-box" id="promptPreview"></div>
 
-            <!-- 修正：按鈕文字全面簡化，並採用橫向雙排佈局 -->
             <div class="button-group">
                 <button class="action-button btn-copy" id="copyBtn"><span>🔗 複製</span></button>
                 <button class="action-button btn-doubao" id="doubaoBtn"><span>🚀 豆包貼上</span></button>
@@ -448,9 +581,10 @@
     const copyBtn = document.getElementById('copyBtn');
     const doubaoBtn = document.getElementById('doubaoBtn');
     
-    const stepBar1 = document.getElementById('stepBar1');
-    const stepBar2 = document.getElementById('stepBar2');
-    const stepBar3 = document.getElementById('stepBar3');
+    const pipelineBox = document.getElementById('pipelineBox');
+    const node1 = document.getElementById('node1');
+    const node2 = document.getElementById('node2');
+    const node3 = document.getElementById('node3');
     const step1Text = document.getElementById('step1Text');
     const panelStageTitle = document.getElementById('panelStageTitle');
 
@@ -468,7 +602,7 @@
         });
 
         if (filtered.length === 0) {
-            gridContainer.innerHTML = `<div style="grid-column: span 3; color:var(--text-muted); text-align:center; padding: 20px 0; font-size:14px;">找不到相關目的地</div>`;
+            gridContainer.innerHTML = `<div style="grid-column: span 3; color:var(--text-muted); text-align:center; padding: 20px 0; font-size:13.5px; font-weight:500;">未搵到相關目的地</div>`;
             return;
         }
 
@@ -489,12 +623,13 @@
                 promptPreview.innerText = compiledPromptText;
                 flowSection.style.display = 'flex';
                 
-                step1Text.innerText = `已選目的地：${c.name}`;
+                step1Text.innerText = c.name;
                 panelStageTitle.innerText = `第一步已完成 ➔ 請執行第二步`;
                 
-                stepBar1.classList.remove('active');
-                stepBar2.classList.add('active');
-                stepBar3.classList.remove('active');
+                pipelineBox.className = "pipeline-container stage-2";
+                node1.classList.add('active');
+                node2.classList.add('active');
+                node3.classList.remove('active');
             });
 
             gridContainer.appendChild(btn);
@@ -516,15 +651,17 @@
 
     searchInput.addEventListener('input', renderGrid);
 
-    // 一鍵複製
     copyBtn.addEventListener('click', () => {
         if (!compiledPromptText) return;
         navigator.clipboard.writeText(compiledPromptText).then(() => {
             copyBtn.innerHTML = "<span>✅ 已複製</span>";
             copyBtn.classList.add('success');
-            stepBar2.classList.remove('active');
-            stepBar3.classList.add('active');
-            panelStageTitle.innerText = `第二步已完成 ➔ 請點擊下方按鈕貼落豆包`;
+            
+            pipelineBox.className = "pipeline-container stage-3";
+            node1.classList.add('active');
+            node2.classList.add('active');
+            node3.classList.add('active');
+            panelStageTitle.innerText = `第二步已完成 ➔ 請點擊右方按鈕貼落豆包`;
 
             setTimeout(() => {
                 copyBtn.innerHTML = "<span>🔗 複製</span>";
@@ -533,7 +670,6 @@
         });
     });
 
-    // 開啟豆包
     doubaoBtn.addEventListener('click', () => {
         const webUrl = "https://www.doubao.com/";
         const appScheme = "doubao://";
