@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⏳ 定格漫遊：手掌間的全球 3D 景觀摺頁</title>
+    <style>
+        :root {
+            --bg-color: #f7f6f1;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-muted: #8c8c8c;
+            --border-radius: 16px;
+            --primary-color: #222222;
+            --accent-active: #e8f3fd;
+            --border-active: #d2e6fa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* 頂部主標題 */
+        .app-header {
+            text-align: center;
+            padding: 8px 0;
+        }
+
+        .app-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 0.5px;
+        }
+
+        .app-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* 頂部步驟條 */
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .step-bar {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+
+        .step-bar.active {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .step-number {
+            background: var(--primary-color);
+            color: #ffffff;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .step-text {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* 主面板 */
+        .main-panel {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+
+        /* 搜索欄 */
+        .search-box {
+            background: var(--bg-color);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .search-box:focus-within {
+            border-color: #ddd;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            font-size: 15px;
+            outline: none;
+            margin-left: 10px;
+            color: var(--text-color);
+        }
+
+        /* 左右控制箭頭滑動外殼 */
+        .continents-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin-bottom: 18px;
+            background: var(--bg-color);
+            border-radius: 20px;
+            padding: 2px 4px;
+        }
+
+        .scroll-arrow {
+            background: transparent;
+            border: none;
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .scroll-arrow:hover {
+            color: var(--primary-color);
+        }
+
+        .continents-tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            flex: 1;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            padding: 4px 0;
+        }
+        
+        .continents-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            background: #ffffff;
+            border: 1px solid transparent;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: #ffffff;
+        }
+
+        /* 國家網格 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            min-height: 120px;
+        }
+
+        .country-btn {
+            background: var(--bg-color);
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+            padding: 14px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            outline: none;
+        }
+
+        .country-btn:active {
+            transform: scale(0.96);
+        }
+
+        .country-btn.selected {
+            background: var(--accent-active);
+            border-color: var(--border-active);
+        }
+
+        .flag-img {
+            width: 36px;
+            height: 26px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .country-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #444;
+            text-align: center;
+        }
+
+        /* 聯動動態展現區 */
+        .dynamic-flow-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #e5e5e0;
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .prompt-preview-box {
+            background: #fafafa;
+            border: 1px solid #eeeeee;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 12px;
+            color: #555;
+            max-height: 110px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .prompt-lang-title {
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 4px;
+        }
+
+        /* 雙按鈕橫向並排樣式優化 */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .action-button {
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1; /* 均分寬度 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy { background: var(--primary-color); color: #ffffff; }
+        .btn-copy:hover { background: #444444; }
+        .btn-copy.success { background: #4caf50; }
+
+        .btn-doubao {
+            background: linear-gradient(135deg, #3884ff, #0052d9);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(56, 132, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="app-header">
+        <h1 class="app-title">⏳ 定格漫遊</h1>
+        <p class="app-subtitle">手掌間的全球 3D 景觀摺頁</p>
+    </div>
+
+    <div class="steps-container">
+        <div class="step-bar active" id="stepBar1"><div class="step-number">1</div><div class="step-text" id="step1Text">揀你想去嘅國家</div></div>
+        <div class="step-bar" id="stepBar2"><div class="step-number">2</div><div class="step-text">一鍵複製提示詞</div></div>
+        <div class="step-bar" id="stepBar3"><div class="step-number">3</div><div class="step-text">貼落豆包生成</div></div>
+    </div>
+
+    <div class="main-panel">
+        <div class="panel-title" id="panelStageTitle">第一步．揀國家</div>
+        
+        <div class="search-box">
+            <span>🔍</span>
+            <input type="text" id="searchInput" placeholder="搜尋漫遊目的地（英文或中文）">
+        </div>
+
+        <div class="continents-wrapper">
+            <button class="scroll-arrow" id="arrowLeft" aria-label="向左滾動">◀</button>
+            <div class="continents-tabs" id="tabsGroup">
+                <button class="tab-btn active" data-continent="asia">亞洲</button>
+                <button class="tab-btn" data-continent="europe">歐洲</button>
+                <button class="tab-btn" data-continent="north-america">北美洲</button>
+                <button class="tab-btn" data-continent="south-america">南美洲</button>
+                <button class="tab-btn" data-continent="africa">非洲</button>
+                <button class="tab-btn" data-continent="oceania">大洋洲</button>
+            </div>
+            <button class="scroll-arrow" id="arrowRight" aria-label="向右滾動">▶</button>
+        </div>
+
+        <div class="grid-container" id="gridContainer"></div>
+
+        <div class="dynamic-flow-section" id="flowSection">
+            <div class="prompt-lang-title">📋 摺頁場景提示詞 (Midjourney / DALL-E 通用):</div>
+            <div class="prompt-preview-box" id="promptPreview"></div>
+
+            <!-- 修正：按鈕文字全面簡化，並採用橫向雙排佈局 -->
+            <div class="button-group">
+                <button class="action-button btn-copy" id="copyBtn"><span>🔗 複製</span></button>
+                <button class="action-button btn-doubao" id="doubaoBtn"><span>🚀 豆包貼上</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const globalCountryDataset = [
+        // 亞洲 (Asia) - 9 國
+        { name: '日本', en: 'Japan', iso: 'jp', continent: 'asia', elements: 'Kimono (和服), Mount Fuji (富士山), romantic cherry blossoms, historic wooden torii gate' },
+        { name: '韓國', en: 'South Korea', iso: 'kr', continent: 'asia', elements: 'Hanbok clothing (韓服), historic palaces, neon-lit Seoul street signs' },
+        { name: '台灣', en: 'Taiwan', iso: 'tw', continent: 'asia', elements: 'Taipei 101 skyscraper, vibrant night market stalls, traditional red lanterns' },
+        { name: '泰國', en: 'Thailand', iso: 'th', continent: 'asia', elements: 'ornate golden temples, iconic tuk-tuk car, traditional Thai costume' },
+        { name: '新加坡', en: 'Singapore', iso: 'sg', continent: 'asia', elements: 'Marina Bay Sands hotel, Merlion statue, futuristic supertrees' },
+        { name: '越南', en: 'Vietnam', iso: 'vn', continent: 'asia', elements: 'Ao Dai clothing, traditional wooden Halong cruise boat, colourful lanterns' },
+        { name: '馬來西亞', en: 'Malaysia', iso: 'my', continent: 'asia', elements: 'Petronas Twin Towers, rich cultural architectural motifs' },
+        { name: '中國', en: 'China', iso: 'cn', continent: 'asia', elements: 'The Forbidden City architecture, elegant traditional Hanfu garments' },
+        { name: '印尼', en: 'Indonesia', iso: 'id', continent: 'asia', elements: 'Bali ancient temples, lush tropical terraced rice fields' },
+
+        // 歐洲 (Europe) - 9 國
+        { name: '英國', en: 'United Kingdom', iso: 'gb', continent: 'europe', elements: 'Big Ben, red double-decker bus, classic London street architecture' },
+        { name: '法國', en: 'France', iso: 'fr', continent: 'europe', elements: 'Eiffel Tower, cozy Parisian outdoor cafes, romantic street lamps' },
+        { name: '義大利', en: 'Italy', iso: 'it', continent: 'europe', elements: 'Colosseum, romantic Venice canals with gondolas, historic stone streets' },
+        { name: '德國', en: 'Germany', iso: 'de', continent: 'europe', elements: 'Neuschwanstein Castle, historic timber-framed houses, traditional Oktoberfest outfits' },
+        { name: '荷蘭', en: 'Netherlands', iso: 'nl', continent: 'europe', elements: 'classic wooden windmills, endless vibrant tulip fields, traditional canal houses' },
+        { name: '瑞士', en: 'Switzerland', iso: 'ch', continent: 'europe', elements: 'Matterhorn peak, charming alpine wooden chalets, scenic mountain railway trains' },
+        { name: '西班牙', en: 'Spain', iso: 'es', continent: 'europe', elements: 'Sagrada Familia cathedral, passionate Flamenco dancers, sunny Mediterranean plazas' },
+        { name: '希臘', en: 'Greece', iso: 'gr', continent: 'europe', elements: 'Santorini blue-domed white houses, ancient Parthenon temple, crystal Aegean sea' },
+        { name: '奧地利', en: 'Austria', iso: 'at', continent: 'europe', elements: 'Hallstatt lakeside village, classic Viennese opera houses, majestic baroque palaces' },
+
+        // 北美洲 (North America) - 9 國
+        { name: '美國', en: 'United States', iso: 'us', continent: 'north-america', elements: 'Statue of Liberty, yellow taxi cabs, Times Square glittering neon billboards' },
+        { name: '加拿大', en: 'Canada', iso: 'ca', continent: 'north-america', elements: 'CN Tower, beautiful red maple forests, majestic snow-capped rocky mountains' },
+        { name: '墨西哥', en: 'Mexico', iso: 'mx', continent: 'north-america', elements: 'Chichen Itza Mayan pyramids, colourful traditional Mariachi instruments, vibrant folk art decor' },
+        { name: '古巴', en: 'Cuba', iso: 'cu', continent: 'north-america', elements: 'vintage classic cars, colourful Havana colonial architecture, palm trees' },
+        { name: '牙買加', en: 'Jamaica', iso: 'jm', continent: 'north-america', elements: 'vibrant Reggae culture decor, lush tropical rainforest waterfalls, sunny Caribbean beaches' },
+        { name: '哥斯大黎加', en: 'Costa Rica', iso: 'cr', continent: 'north-america', elements: 'exotic toucan birds, lush misty cloud forests, active Arenal volcano backdrop' },
+        { name: '巴拿馬', en: 'Panama', iso: 'pa', continent: 'north-america', elements: 'Panama Canal ships, modern Panama City skyline, traditional Molas textile designs' },
+        { name: '巴哈馬', en: 'Bahamas', iso: 'bs', continent: 'north-america', elements: 'famous pink sand beaches, swimming pigs in clear turquoise sea, luxury tropical resorts' },
+        { name: '多明尼加', en: 'Dominican Republic', iso: 'do', continent: 'north-america', elements: 'historic Santo Domingo colonial zones, pristine white sand beaches, Merengue instruments' },
+
+        // 南美洲 (South America) - 9 國
+        { name: '巴西', en: 'Brazil', iso: 'br', continent: 'south-america', elements: 'Christ the Redeemer statue, vibrant Rio street carnival, lush Amazon rainforest motifs' },
+        { name: '秘魯', en: 'Peru', iso: 'pe', continent: 'south-america', elements: 'Machu Picchu ancient ruins, adorable alpacas, traditional Andean textile patterns' },
+        { name: '阿根廷', en: 'Argentina', iso: 'ar', continent: 'south-america', elements: 'La Boca colourful street houses, passionate Tango dancers, majestic Patagonia glaciers' },
+        { name: '智利', en: 'Chile', iso: 'cl', continent: 'south-america', elements: 'Easter Island Moai stone statues, snow-capped Andes mountains, scenic Torres del Paine' },
+        { name: '哥倫比亞', en: 'Colombia', iso: 'co', continent: 'south-america', elements: 'vibrant colonial town architecture, sprawling green coffee plantations, colourful Chiva buses' },
+        { name: '玻利維亞', en: 'Bolivia', iso: 'bo', continent: 'south-america', elements: 'Salar de Uyuni salt flat sky-mirror, traditional cholita bowler hats, majestic Andes backdrop' },
+        { name: '厄瓜多', en: 'Ecuador', iso: 'ec', continent: 'south-america', elements: 'Galapagos unique giant tortoises, Middle of the World monument, historic Quito old town' },
+        { name: '委內瑞拉', en: 'Venezuela', iso: 've', continent: 'south-america', elements: 'majestic Angel Falls waterfall, grand tepui flat-top table mountains, vibrant local orchids' },
+        { name: '烏拉圭', en: 'Uruguay', iso: 'uy', continent: 'south-america', elements: 'Casapueblo white abstract architecture, historic Colonia del Sacramento cobblestone streets' },
+
+        // 非洲 (Africa) - 9 國
+        { name: '埃及', en: 'Egypt', iso: 'eg', continent: 'africa', elements: 'Great Pyramids of Giza, Sphinx, golden desert oasis under sunset' },
+        { name: '肯亞', en: 'Kenya', iso: 'ke', continent: 'africa', elements: 'savanna wildlife with lions and elephants, majestic acacia trees, safari hot air balloons' },
+        { name: '南非', en: 'South Africa', iso: 'za', continent: 'africa', elements: 'Table Mountain backdrop, beautiful Cape Town coastal penguins, protea flower blooms' },
+        { name: '摩洛哥', en: 'Morocco', iso: 'ma', continent: 'africa', elements: 'blue-painted Chefchaouen streets, intricate mosaic tile patterns, Sahara desert camel caravans' },
+        { name: '馬達加斯加', en: 'Madagascar', iso: 'mg', continent: 'africa', elements: 'iconic massive baobab trees, cute lemurs, unique tropical island flora' },
+        { name: '坦尚尼亞', en: 'Tanzania', iso: 'tz', continent: 'africa', elements: 'Mount Kilimanjaro peak, Serengeti wildlife migration, beautiful Zanzibar stone towns' },
+        { name: '模里西斯', en: 'Mauritius', iso: 'mu', continent: 'africa', elements: 'unique seven coloured earths geological dunes, turquoise lagoon reefs, lush sugarcane fields' },
+        { name: '突尼西亞', en: 'Tunisia', iso: 'tn', continent: 'africa', elements: 'blue and white Sidi Bou Said village houses, ancient Roman amphitheatre of El Djem' },
+        { name: '衣索比亞', en: 'Ethiopia', iso: 'et', continent: 'africa', elements: 'Lalibela rock-hewn monolithic churches, majestic mountains, traditional coffee items' },
+
+        // 大洋洲 (Oceania) - 9 國
+        { name: '澳洲', en: 'Australia', iso: 'au', continent: 'oceania', elements: 'Sydney Opera House, cute kangaroos and koalas, coastal surfing lifestyle scene' },
+        { name: '紐西蘭', en: 'New Zealand', iso: 'nz', continent: 'oceania', elements: 'Hobbiton-style rolling green hills, majestic fjords, pure Southern Alps snow landscapes' },
+        { name: '斐濟', en: 'Fiji', iso: 'fj', continent: 'oceania', elements: 'palm-fringed crystal clear water bungalows, traditional outrigger canoes, tropical hibiscus flowers' },
+        { name: '大溪地', en: 'Tahiti', iso: 'pf', continent: 'oceania', elements: 'luxurious overwater villas, volcanic Bora Bora peaks, exotic black pearl motifs' },
+        { name: '薩摩亞', en: 'Samoa', iso: 'ws', continent: 'oceania', elements: 'To Sua ocean trench natural pool, traditional wooden fale beach houses, lush jungle waterfalls' },
+        { name: '巴布亞紐幾內亞', en: 'Papua New Guinea', iso: 'pg', continent: 'oceania', elements: 'traditional tribal wooden masks, exotic birds of paradise, lush pristine rainforest trails' },
+        { name: '萬那杜', en: 'Vanuatu', iso: 'vu', continent: 'oceania', elements: 'active Yasur volcano eruptions, beautiful hidden blue holes, traditional land diving wooden towers' },
+        { name: '帛琉', en: 'Palau', iso: 'pw', continent: 'oceania', elements: 'famous stingless jellyfish lake, limestone Rock Islands emerald hills, vibrant coral reefs' },
+        { name: '索羅門群島', en: 'Solomon Islands', iso: 'sb', continent: 'oceania', elements: 'pristine coral lagoons, traditional canoe wood carvings, tropical island coconut palms' }
+    ];
+
+    const gridContainer = document.getElementById('gridContainer');
+    const searchInput = document.getElementById('searchInput');
+    const tabsGroup = document.getElementById('tabsGroup');
+    const arrowLeft = document.getElementById('arrowLeft');
+    const arrowRight = document.getElementById('arrowRight');
+    const flowSection = document.getElementById('flowSection');
+    const promptPreview = document.getElementById('promptPreview');
+    const copyBtn = document.getElementById('copyBtn');
+    const doubaoBtn = document.getElementById('doubaoBtn');
+    
+    const stepBar1 = document.getElementById('stepBar1');
+    const stepBar2 = document.getElementById('stepBar2');
+    const stepBar3 = document.getElementById('stepBar3');
+    const step1Text = document.getElementById('step1Text');
+    const panelStageTitle = document.getElementById('panelStageTitle');
+
+    let currentSelectedContinent = "asia";
+    let compiledPromptText = "";
+
+    function renderGrid() {
+        gridContainer.innerHTML = "";
+        const searchKeyword = searchInput.value.toLowerCase().trim();
+
+        const filtered = globalCountryDataset.filter(c => {
+            const matchContinent = searchKeyword !== "" ? true : (c.continent === currentSelectedContinent);
+            const matchKeyword = (c.name.includes(searchKeyword) || c.en.toLowerCase().includes(searchKeyword));
+            return matchContinent && matchKeyword;
+        });
+
+        if (filtered.length === 0) {
+            gridContainer.innerHTML = `<div style="grid-column: span 3; color:var(--text-muted); text-align:center; padding: 20px 0; font-size:14px;">找不到相關目的地</div>`;
+            return;
+        }
+
+        filtered.forEach(c => {
+            const btn = document.createElement('button');
+            btn.className = 'country-btn';
+            btn.setAttribute('role', 'button');
+            
+            const flagUrl = `https://flagcdn.com/w80/${c.iso}.png`;
+            btn.innerHTML = `<img class="flag-img" src="${flagUrl}" alt="${c.name}"><span class="country-name">${c.name}</span>`;
+            
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.country-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                
+                compiledPromptText = `A 3D pop-up style travel scene of ${c.en}, designed as a 9:16 vertical iPhone wallpaper. The composition features an intense sense of 3D depth and perspective. A large aperture effect with shallow depth of field, where the foreground elements are softly blurred, making the main subject crisp and clear. Include iconic landmarks, charming street scenes, and figures dressed in traditional clothing featuring ${c.elements} to create a rich local atmosphere. Vibrant and translucent color tones, soft and warm lighting, creating an uplifting mood. 3D rendering style, claymation miniature look, intricate details. --ar 9:16`;
+                
+                promptPreview.innerText = compiledPromptText;
+                flowSection.style.display = 'flex';
+                
+                step1Text.innerText = `已選目的地：${c.name}`;
+                panelStageTitle.innerText = `第一步已完成 ➔ 請執行第二步`;
+                
+                stepBar1.classList.remove('active');
+                stepBar2.classList.add('active');
+                stepBar3.classList.remove('active');
+            });
+
+            gridContainer.appendChild(btn);
+        });
+    }
+
+    arrowLeft.addEventListener('click', () => { tabsGroup.scrollLeft -= 90; });
+    arrowRight.addEventListener('click', () => { tabsGroup.scrollLeft += 90; });
+
+    tabsGroup.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('tab-btn')) return;
+        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        currentSelectedContinent = e.target.getAttribute('data-continent');
+        
+        searchInput.value = "";
+        renderGrid();
+    });
+
+    searchInput.addEventListener('input', renderGrid);
+
+    // 一鍵複製
+    copyBtn.addEventListener('click', () => {
+        if (!compiledPromptText) return;
+        navigator.clipboard.writeText(compiledPromptText).then(() => {
+            copyBtn.innerHTML = "<span>✅ 已複製</span>";
+            copyBtn.classList.add('success');
+            stepBar2.classList.remove('active');
+            stepBar3.classList.add('active');
+            panelStageTitle.innerText = `第二步已完成 ➔ 請點擊下方按鈕貼落豆包`;
+
+            setTimeout(() => {
+                copyBtn.innerHTML = "<span>🔗 複製</span>";
+                copyBtn.classList.remove('success');
+            }, 2000);
+        });
+    });
+
+    // 開啟豆包
+    doubaoBtn.addEventListener('click', () => {
+        const webUrl = "https://www.doubao.com/";
+        const appScheme = "doubao://";
+        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            const startTime = Date.now();
+            window.location.href = appScheme;
+            setTimeout(() => { if (Date.now() - startTime < 2000) window.open(webUrl, '_blank'); }, 1500);
+        } else {
+            window.open(webUrl, '_blank');
+        }
+    });
+
+    renderGrid();
+</script>
+</body>
+</html>
